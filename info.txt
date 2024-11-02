@@ -1,0 +1,42 @@
+EmailProcessingService/
+├── config/
+│   ├── supabase.js         # Configuración de Supabase
+│   └── gmail.js            # Configuración de Gmail API
+│
+├── services/
+│   ├── banks/
+│   │   ├── processors/
+│   │   │   └── chile/
+│   │   │       ├── bancochile.js
+│   │   │       ├── bancoestado.js
+│   │   │       └── santander.js
+│   │   └── bankService.js  # Servicio principal para bancos
+│   │
+│   ├── subscriptions/
+│   │   ├── processors/
+│   │   │   ├── netflix.js
+│   │   │   ├── spotify.js
+│   │   │   └── amazon.js
+│   │   └── subscriptionService.js
+│   │
+│   └── purchases/
+│       ├── processors/
+│       │   ├── mercadolibre.js
+│       │   ├── shein.js
+│       │   └── amazon.js
+│       └── purchaseService.js
+│
+├── utils/
+│   ├── emailParser.js      # Parseador general de emails
+│   ├── tokenManager.js     # Gestión de tokens de Gmail
+│   └── dateFormatter.js    # Utilidad para formateo de fechas
+│
+├── models/
+│   ├── Transaction.js      # Modelo para transacciones
+│   ├── Subscription.js     # Modelo para suscripciones
+│   └── Purchase.js         # Modelo para compras
+│
+├── package.json
+├── .env                    # Variables de entorno
+├── .gitignore
+└── server.js              # Punto de entrada de la aplicación
