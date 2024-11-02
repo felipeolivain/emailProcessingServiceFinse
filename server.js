@@ -3,6 +3,7 @@ const express = require('express')
 const { setupBankService } = require('./services/banks/bankService')
 const { setupSubscriptionService } = require('./services/subscriptions/subscriptionService')
 const { setupPurchaseService } = require('./services/purchases/purchaseService')
+const Transaction = require('./models/Transaction');
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -37,6 +38,36 @@ app.post('/webhook/email', async (req, res) => {
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK' })
 })
+
+// Nuevo endpoint para sincronizar transacciones
+app.post('/api/transactions/sync', async (req, res) => {
+  try {
+    const { userId, action = 'extract' } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ 
+        error: 'Se requiere el ID del usuario' 
+      });
+    }
+
+    // Llamar al método de sincronización
+    const results = await Transaction.syncBankTransactions(userId, action);
+
+    // Enviar respuesta exitosa
+    res.status(200).json({ 
+      success: true,
+      message: 'Sincronización completada',
+      data: results
+    });
+
+  } catch (error) {
+    console.error('Error en sincronización:', error);
+    res.status(500).json({ 
+      success: false,
+      error: error.message || 'Error en la sincronización'
+    });
+  }
+});
 
 // Manejo de errores global
 app.use((err, req, res, next) => {
