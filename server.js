@@ -1,8 +1,6 @@
 require('dotenv').config()
 const express = require('express')
-const { setupBankService } = require('./services/banks/bankService')
-const { setupSubscriptionService } = require('./services/subscriptions/subscriptionService')
-const { setupPurchaseService } = require('./services/purchases/purchaseService')
+const bankService = require('./services/banks/bankService')
 const Transaction = require('./models/Transaction');
 
 const app = express()
@@ -11,22 +9,13 @@ const port = process.env.PORT || 3000
 // Middleware
 app.use(express.json())
 
-// Inicialización de servicios
-const bankService = setupBankService()
-const subscriptionService = setupSubscriptionService()
-const purchaseService = setupPurchaseService()
-
 // Rutas básicas
 app.post('/webhook/email', async (req, res) => {
   try {
     const { emailData, userId } = req.body
     
     // Procesar el email según su tipo
-    await Promise.all([
-      bankService.processEmail(emailData, userId),
-      subscriptionService.processEmail(emailData, userId),
-      purchaseService.processEmail(emailData, userId)
-    ])
+    await bankService.processEmail(emailData, userId)
 
     res.status(200).json({ message: 'Email procesado correctamente' })
   } catch (error) {
@@ -39,7 +28,7 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK' })
 })
 
-// Nuevo endpoint para sincronizar transacciones
+// Endpoint para sincronizar transacciones
 app.post('/api/transactions/sync', async (req, res) => {
   try {
     const { userId, action = 'extract' } = req.body;
@@ -50,10 +39,9 @@ app.post('/api/transactions/sync', async (req, res) => {
       });
     }
 
-    // Llamar al método de sincronización
-    const results = await Transaction.syncBankTransactions(userId, action);
+    const transaction = new Transaction();
+    const results = await transaction.syncBankTransactions(userId, action);
 
-    // Enviar respuesta exitosa
     res.status(200).json({ 
       success: true,
       message: 'Sincronización completada',
