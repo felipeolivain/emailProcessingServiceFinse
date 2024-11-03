@@ -40,3 +40,8 @@ EmailProcessingService/
 ├── .env                    # Variables de entorno
 ├── .gitignore
 └── server.js              # Punto de entrada de la aplicación
+
+
+03/11/2024
+objetivo: que el proyecto sea una api pero por ahora estara protegido con rls y los users solo podran ver sus propios datos
+
