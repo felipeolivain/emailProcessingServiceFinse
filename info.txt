@@ -45,3 +45,56 @@ EmailProcessingService/
 03/11/2024
 objetivo: que el proyecto sea una api pero por ahora estara protegido con rls y los users solo podran ver sus propios datos
 
+
+11/11/2024
+analisis de como usar jwt para proteger la api
+
+nosotros ya tenemos el jwt creado por supabase
+esta tiene que ser guardada en el AsyncStorage de el frontend de la aplicacion del usuario
+y cada vez que el usuario quiera hacer una peticion a la api se tiene que mandar el jwt en el header de la peticion
+
+luego tenemos que verificar que el jwt sea valido y si lo es entonces se le da acceso a la api
+podemos usar la biblioteca jsonwebtoken para decodificar y verificar el token
+creamos un middleware para esto y se lo agregamos a las rutas que queremos proteger
+
+con req.user obtenemos el id del usuario, podemos usar esta id para realizar las operaciones que queremos
+
+
+
+-para que el servidor pueda verificar el jwt necesitamos la llave secreta que supabase uso para firmar el token
+esta llave secreta se encuentra en el archivo de configuracion de supabase en la carpeta config
+
+
+- el jwt de supabase expira por lo que tenemos que ir renovandolo
+- tambien podemos cambiar el tiempo de expiracion del jwt
+
+
+
+
+
+
+
+
+
+paso a seguir para poder implementar el jwt:
+
+la app movile tiene que tener un buen sistema de autenticacion y de guardado de jwt
+en el server usamos las claves de supabase para verificar el jwt
+creamos el middleware para proteger las rutas que necesitan autenticacion
+el server tiene que ser capaz de decodificar el jwt y obtener el id del usuario para usar en la bd y poder
+cumplir con la solicitud del usuario
+la informacion se muestra al usuario, ademas de que el server lo guarda en la bd
+
+
+problemas:
+la autenticacion tiene que estar en el sevidor
+todas las peticiones tienen que ser al server y tenemos que sacar supabase del frontend
+
+por el momento lo mejor es enfocarnos en que la funcion del core sea con jwt
+
+
+dejamos que el tiempo de expiracion del jwt fuera de 7 dias pero la idea es que cada vez que entre
+se refresquee el jwt para mayor seguridad y para que dure lo suficiente
+
+vamos a intalar depentendias de jsonwebtoken para usar jwt
+
