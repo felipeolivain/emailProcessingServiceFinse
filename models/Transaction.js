@@ -44,7 +44,6 @@ class Transaction {
       .select('*')
       .eq('user_id', userId)
       .eq('bank_id', bankInfo.bankId)
-      .eq('country', bankInfo.country)
       .eq('status', 'active')
       .single();
 
