@@ -1,10 +1,13 @@
 const BancoEstadoProcessor = require('./processors/chile/bancoEstado');
 
+
+// Servicio para manejar operaciones relacionadas con bancos
 class BankService {
   constructor() {
     this.loadProcessors();
   }
 
+  // Carga los procesadores de bancos
   loadProcessors() {
     this.processors = {
       chile: {
@@ -17,6 +20,7 @@ class BankService {
     };
   }
 
+  // Decodifica el email y devuelve los datos del banco
   async decode(emailData) {
     try {
       const bankInfo = this.identifyBank(emailData);
@@ -36,6 +40,7 @@ class BankService {
     }
   }
 
+  // Obtiene los dominios de email de todos los bancos
   getBankDomains() {
     const domains = [];
     for (const country of Object.values(this.processors)) {
@@ -46,6 +51,7 @@ class BankService {
     return domains;
   }
 
+  // Identifica el banco basado en el dominio del email
   identifyBank(emailData) {
     const from = emailData.payload.headers.find(h => h.name === 'From')?.value || '';
     

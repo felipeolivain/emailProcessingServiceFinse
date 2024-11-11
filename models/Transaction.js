@@ -31,11 +31,14 @@ class Transaction {
         return await this.updateExistingData(decodedData, userId);
       }
 
-    } catch (error) {
+    }
+     catch (error) {
       console.error('Error en Transaction:', error);
       throw error;
     }
   }
+
+// funciones del process:
 
   // Verifica si el usuario tiene autorización para un banco específico
   async checkBankAuthorization(userId, bankInfo) {
@@ -50,22 +53,21 @@ class Transaction {
     if (error) throw error;
     return !!data;
   }
-
-  // Implementa la lógica para extraer toda la información de una transacción
+  // Implementa la lógica para extraer toda la información de una transacción// cambiarlo
   async extractFullData(decodedData, userId) {
     // Implementar lógica para extraer toda la información
     const { error } = await this.supabase
-      .from('transferencias')
+      .from('email_transferencias')
       .insert([{ ...decodedData, user_id: userId }]);
 
     if (error) throw error;
     return decodedData;
   }
-
+  // Implementa la lógica para actualizar información existente// cambiarlo
   async updateExistingData(decodedData, userId) {
     // Implementar lógica para actualizar información existente
     const { error } = await this.supabase
-      .from('transferencias')
+      .from('email_transferencias')
       .upsert([{ ...decodedData, user_id: userId }]);
 
     if (error) throw error;
@@ -86,7 +88,11 @@ class Transaction {
     return data;
   }
 
-  // Sincroniza las transacciones de los bancos autorizados
+
+
+
+
+  // Sincroniza las transacciones de los bancos autorizados, funcion principal
   async syncBankTransactions(userId, action = 'extract') {
     try {
       // Obtener token de Gmail del usuario
@@ -122,6 +128,8 @@ class Transaction {
     }
   }
 
+// funciones adiccionales para syncBankTransactions:
+
   // Actualiza la última sincronización de los bancos del usuario
   async updateLastSync(userId, banks) {
     const updates = banks.map(bank => ({
@@ -129,24 +137,26 @@ class Transaction {
       bank_id: bank.id,
       last_sync_at: new Date().toISOString()
     }));
-
+    
     const { error } = await this.supabase
       .from('user_integrated_banks')
       .upsert(updates);
 
     if (error) throw error;
   }
-
-  // Obtiene los bancos autorizados para el usuario
+  // Obtiene los bancos autorizados para el usuario// puede estar mal
+  // falta en la base de datos add colummnas que son necesarias para que esto funcione
   async getAuthorizedBanks(userId) {
     const { data, error } = await this.supabase
       .from('user_integrated_banks')
       .select(`
         *,
-        bank:banks!bank_id (
+        bank:integrable_banks!bank_id (
           id,
           name,
-          email_domain,
+          description,
+          logo_url,
+          identifier,
           country
         )
       `)
@@ -162,7 +172,9 @@ class Transaction {
     return data.map(integration => ({
       id: integration.bank.id,
       name: integration.bank.name,
-      email_domain: integration.bank.email_domain,
+      description: integration.bank.description,
+      logo_url: integration.bank.logo_url,
+      identifier: integration.bank.identifier,
       country: integration.bank.country,
       last_sync_at: integration.last_sync_at
     }));
