@@ -9,7 +9,6 @@ class Transaction {
     this.gmailService = gmailService;
   }
 
-
   // Procesa un email y realiza la acción solicitada (extraer o actualizar)
   async process(emailData, userId, action = 'extract') {
     try {
@@ -89,9 +88,6 @@ class Transaction {
   }
 
 
-
-
-
   // Sincroniza las transacciones de los bancos autorizados, funcion principal
   async syncBankTransactions(userId, action = 'extract') {
     try {
@@ -129,7 +125,6 @@ class Transaction {
   }
 
 // funciones adiccionales para syncBankTransactions:
-
   // Actualiza la última sincronización de los bancos del usuario
   async updateLastSync(userId, banks) {
     const updates = banks.map(bank => ({
@@ -157,7 +152,8 @@ class Transaction {
           description,
           logo_url,
           identifier,
-          country
+          country,
+          email_domain
         )
       `)
       .eq('user_id', userId)
@@ -176,6 +172,7 @@ class Transaction {
       logo_url: integration.bank.logo_url,
       identifier: integration.bank.identifier,
       country: integration.bank.country,
+      email_domain: integration.bank.email_domain,
       last_sync_at: integration.last_sync_at
     }));
   }

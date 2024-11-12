@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 3000;
 
 const JWT_SECRET = process.env.SUPABASE_JWT_SECRET;
 
-//Autenticación del token
+//Autenticación del token de jwt
 function authenticateToken(req, res, next) {
   const token = req.headers['authorization']?.split(' ')[1];
 
@@ -25,6 +25,7 @@ function authenticateToken(req, res, next) {
   });
 }
 
+// Configuración del servidor
 app.use(express.json());
 
  //Extraer datos
@@ -51,6 +52,7 @@ app.post('/update', authenticateToken, async (req, res) => {
   }
 });
 
+// Iniciar el servidor
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
